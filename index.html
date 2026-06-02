@@ -344,6 +344,10 @@ const WORTSCHATZ = {
     kl12: ['an','auf','aus','bei','bis','durch','für','gegen','hinter','in','mit','nach','neben','ohne','über','um','unter','von','vor','zu'],
     kl34: ['an','auf','aus','bei','bis','durch','für','gegen','gegenüber','hinter','in','mit','nach','neben','ohne','seit','statt','über','um','unter','von','vor','wegen','zu']
   },
+  verb: {
+    kl12: ['laufen','springen','schlafen','essen','trinken','spielen','lachen','weinen','sehen','hören','gehen','kommen','sagen','machen','haben','sein','werden','kaufen','singen','malen'],
+    kl34: ['arbeiten','lernen','erklären','verstehen','beobachten','vergleichen','beschreiben','erzählen','lesen','schreiben','rechnen','zeichnen','bauen','helfen','fragen','antworten','beginnen','entdecken','erfinden','gewinnen']
+  },
   konjunktion: {
     kl12: ['aber','als','dass','denn','oder','und','weil','wenn'],
     kl34: ['aber','als','bevor','dass','denn','ob','oder','sondern','und','weil','wenn']
@@ -440,6 +444,7 @@ function startGame(){
   const tc=document.querySelector('.chip[data-timer].active');
   timerSecs=tc?parseInt(tc.dataset.timer):10;
   clearTimerInterval();
+  soloCorrect=0;soloWrong=0;soloTotal=0;
 
   if(isSolo){
     teamWortarten[0]=[...teamWortarten[2]];
@@ -472,6 +477,8 @@ function startGame(){
     document.getElementById('pt-blue').textContent=teamNames[0];
     document.getElementById('hdr-red').textContent=teamNames[1];
     document.getElementById('pt-red').textContent=teamNames[1];
+    document.getElementById('pts-blue').textContent='0';
+    document.getElementById('pts-red').textContent='0';
     document.getElementById('panel-blue').className='panel blue';
     document.getElementById('win-info').textContent=maxLead+' Felder Vorsprung oder max. '+maxRounds+' Runden = Sieg 🏆'+(hardMode?' · 💀 Schwerer Modus':'')+(timerOn?' · ⏱ '+timerSecs+'s':'');
     ropePos=0;scores=[0,0];answersGiven=[0,0];totalRounds=0;
@@ -525,11 +532,12 @@ function forceWrong(team){
   locked[team]=true;
   const s=team===0?'blue':'red';
   document.getElementById('fb-'+s).className='feedback-strip wrong';
-  if(hardMode){
+  if(hardMode&&!isSolo){
     const other=1-team,os=other===0?'blue':'red';
     scores[other]++;ropePos+=(other===0?-1:1);
     document.getElementById('pts-'+os).textContent=scores[other];
     drawRope();
+    if(Math.abs(ropePos)>=maxLead){clearTimerInterval();gameOver=true;setTimeout(()=>showTeamResult(other,'rope'),900);return;}
   }
   setTimeout(()=>newQuestion(team),700);
 }
@@ -590,7 +598,7 @@ function handleAnswer(team,chosen,correct,btn){
       scores[team]++;ropePos+=(team===0?-1:1);
       document.getElementById('pts-'+side).textContent=scores[team];
       drawRope();
-      if(Math.abs(ropePos)>=maxLead){clearTimerInterval();setTimeout(()=>showTeamResult(team,'rope'),700);return;}
+      if(Math.abs(ropePos)>=maxLead){clearTimerInterval();gameOver=true;setTimeout(()=>showTeamResult(team,'rope'),700);return;}
     } else {
       btn.classList.add('wrong-flash');
       document.querySelectorAll('#btns-'+side+' .wa-btn').forEach(b=>{if(b.dataset.waId===correct)b.classList.add('correct-flash');});
@@ -599,10 +607,10 @@ function handleAnswer(team,chosen,correct,btn){
         scores[other]++;ropePos+=(other===0?-1:1);
         document.getElementById('pts-'+os).textContent=scores[other];
         drawRope();
-        if(Math.abs(ropePos)>=maxLead){clearTimerInterval();setTimeout(()=>showTeamResult(other,'rope'),900);return;}
+        if(Math.abs(ropePos)>=maxLead){clearTimerInterval();gameOver=true;setTimeout(()=>showTeamResult(other,'rope'),900);return;}
       }
     }
-    if(totalRounds>=maxRounds){clearTimerInterval();setTimeout(()=>{const w=scores[0]>scores[1]?0:scores[1]>scores[0]?1:-1;showTeamResult(w,'rounds');},900);return;}
+    if(totalRounds>=maxRounds){clearTimerInterval();gameOver=true;setTimeout(()=>{const w=scores[0]>scores[1]?0:scores[1]>scores[0]?1:-1;showTeamResult(w,'rounds');},900);return;}
     setTimeout(()=>newQuestion(team),900);
   }
 }
@@ -642,6 +650,7 @@ window.addEventListener('resize',()=>{if(document.getElementById('game').classLi
 
 // ══ Results ══
 function showTeamResult(winner,reason){
+  clearTimerInterval();
   gameOver=true;
   document.getElementById('result-trophy').textContent='🏆';
   document.getElementById('result-label').textContent='Gewinner';
@@ -657,6 +666,7 @@ function showTeamResult(winner,reason){
   launchConfetti();
 }
 function showSoloResult(){
+  clearTimerInterval();
   gameOver=true;
   const pct=Math.round((soloCorrect/maxRounds)*100);
   const perfect=soloCorrect===maxRounds;
