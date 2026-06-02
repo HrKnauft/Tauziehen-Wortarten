@@ -162,6 +162,27 @@ canvas#rope { display: block; width: 100%; height: 100%; }
 .overlay-btns { display: flex; gap: clamp(6px,1vw,12px); width: 100%; }
 .overlay-btn { flex: 1; padding: clamp(8px,1.2vh,13px); border-radius: clamp(8px,1vw,12px); border: 2px solid var(--border); background: white; color: var(--text); font-family: 'Nunito', sans-serif; font-size: clamp(0.72rem,1.1vw,0.9rem); font-weight: 800; cursor: pointer; touch-action: manipulation; }
 .overlay-btn.confirm { background: var(--red); border-color: var(--red); color: white; }
+/* ══ Avatare & Streak ══ */
+.avatar-chip {
+  font-size: clamp(1.1rem,2.4vw,1.8rem); cursor: pointer;
+  padding: clamp(2px,0.4vh,5px) clamp(4px,0.6vw,8px);
+  border-radius: 8px; border: 2px solid transparent;
+  transition: all 0.15s; touch-action: manipulation; background: white; line-height: 1;
+}
+.avatar-chip.active.blue-chip  { border-color: var(--blue);  background: var(--blue-light); }
+.avatar-chip.active.red-chip   { border-color: var(--red);   background: var(--red-light); }
+.avatar-chip.active.green-chip { border-color: var(--green); background: var(--green-light); }
+.team-avatar { font-size: clamp(1.6rem,3.5vw,2.6rem); line-height: 1; display: block; }
+.team-avatar.bounce { animation: av-bounce 0.45s ease; }
+@keyframes av-bounce {
+  0%,100% { transform: scale(1) rotate(0deg); }
+  30%     { transform: scale(1.55) rotate(-12deg); }
+  60%     { transform: scale(1.25) rotate(8deg); }
+}
+.streak-display {
+  font-size: clamp(0.6rem,1.1vw,0.8rem); font-weight: 800;
+  color: #f59e0b; min-height: 1.1em; letter-spacing: 0.04em;
+}
 #confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 200; width: 100%; height: 100%; }
 </style>
 </head>
@@ -183,12 +204,34 @@ canvas#rope { display: block; width: 100%; height: 100%; }
     <div class="team-setup-card blue">
       <h2>🔵 Team 1</h2>
       <input type="text" id="name-blue" value="Team Blau" maxlength="10">
+      <div class="setting-label">Maskottchen</div>
+      <div class="chip-row avatar-pick">
+        <span class="avatar-chip blue-chip active" data-team="0" data-avatar="🦊">🦊</span>
+        <span class="avatar-chip blue-chip" data-team="0" data-avatar="🐻">🐻</span>
+        <span class="avatar-chip blue-chip" data-team="0" data-avatar="🦁">🦁</span>
+        <span class="avatar-chip blue-chip" data-team="0" data-avatar="🐯">🐯</span>
+        <span class="avatar-chip blue-chip" data-team="0" data-avatar="🦄">🦄</span>
+        <span class="avatar-chip blue-chip" data-team="0" data-avatar="🐸">🐸</span>
+        <span class="avatar-chip blue-chip" data-team="0" data-avatar="🦕">🦕</span>
+        <span class="avatar-chip blue-chip" data-team="0" data-avatar="🐧">🐧</span>
+      </div>
       <div class="setting-label">Wortarten</div>
       <div class="wortarten-grid" id="wa-grid-0"></div>
     </div>
     <div class="team-setup-card red">
       <h2>🔴 Team 2</h2>
       <input type="text" id="name-red" value="Team Rot" maxlength="10">
+      <div class="setting-label">Maskottchen</div>
+      <div class="chip-row avatar-pick">
+        <span class="avatar-chip red-chip active" data-team="1" data-avatar="🐺">🐺</span>
+        <span class="avatar-chip red-chip" data-team="1" data-avatar="🦅">🦅</span>
+        <span class="avatar-chip red-chip" data-team="1" data-avatar="🦊">🦊</span>
+        <span class="avatar-chip red-chip" data-team="1" data-avatar="🐻">🐻</span>
+        <span class="avatar-chip red-chip" data-team="1" data-avatar="🦁">🦁</span>
+        <span class="avatar-chip red-chip" data-team="1" data-avatar="🐯">🐯</span>
+        <span class="avatar-chip red-chip" data-team="1" data-avatar="🦄">🦄</span>
+        <span class="avatar-chip red-chip" data-team="1" data-avatar="🐲">🐲</span>
+      </div>
       <div class="setting-label">Wortarten</div>
       <div class="wortarten-grid" id="wa-grid-1"></div>
     </div>
@@ -198,6 +241,17 @@ canvas#rope { display: block; width: 100%; height: 100%; }
   <div class="team-setup-card solo" id="solo-setup" style="display:none">
     <h2>🧑 Einzelspieler</h2>
     <input type="text" id="name-solo" value="Spieler" maxlength="10">
+    <div class="setting-label">Maskottchen</div>
+    <div class="chip-row avatar-pick">
+      <span class="avatar-chip green-chip active" data-team="2" data-avatar="🐸">🐸</span>
+      <span class="avatar-chip green-chip" data-team="2" data-avatar="🦊">🦊</span>
+      <span class="avatar-chip green-chip" data-team="2" data-avatar="🐻">🐻</span>
+      <span class="avatar-chip green-chip" data-team="2" data-avatar="🦁">🦁</span>
+      <span class="avatar-chip green-chip" data-team="2" data-avatar="🦄">🦄</span>
+      <span class="avatar-chip green-chip" data-team="2" data-avatar="🦕">🦕</span>
+      <span class="avatar-chip green-chip" data-team="2" data-avatar="🐧">🐧</span>
+      <span class="avatar-chip green-chip" data-team="2" data-avatar="🌟">🌟</span>
+    </div>
     <div class="setting-label">Wortarten</div>
     <div class="wortarten-grid" id="wa-grid-2"></div>
   </div>
@@ -251,8 +305,10 @@ canvas#rope { display: block; width: 100%; height: 100%; }
   <div class="game-topbar">
     <div class="topbar-row">
       <div class="score-block" id="score-left">
+        <span class="team-avatar" id="avatar-blue">🦊</span>
         <span class="score-name blue" id="hdr-blue">Team Blau</span>
         <span class="score-pts blue" id="pts-blue">0</span>
+        <span class="streak-display" id="streak-blue"></span>
       </div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
         <div style="display:flex;gap:6px">
@@ -262,8 +318,10 @@ canvas#rope { display: block; width: 100%; height: 100%; }
         <span class="round-counter" id="round-counter">Runde 0 / 20</span>
       </div>
       <div class="score-block" id="score-right">
+        <span class="team-avatar" id="avatar-red">🐺</span>
         <span class="score-name red" id="hdr-red">Team Rot</span>
         <span class="score-pts red" id="pts-red">0</span>
+        <span class="streak-display" id="streak-red"></span>
       </div>
     </div>
     <div class="rope-wrap" id="rope-wrap"><canvas id="rope"></canvas></div>
@@ -353,6 +411,40 @@ const WORTSCHATZ = {
     kl34: ['aber','als','bevor','dass','denn','ob','oder','sondern','und','weil','wenn']
   }
 };
+
+// ══ Avatare ══
+let teamAvatars = ['🦊','🐺','🐸'];
+document.querySelectorAll('.avatar-chip').forEach(chip=>{
+  chip.addEventListener('click',()=>{
+    const t=parseInt(chip.dataset.team);
+    document.querySelectorAll(`.avatar-chip[data-team="${t}"]`).forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    teamAvatars[t]=chip.dataset.avatar;
+  });
+});
+function bounceAvatar(side){
+  const el=document.getElementById('avatar-'+side);
+  if(!el)return;
+  el.classList.remove('bounce');
+  void el.offsetWidth;
+  el.classList.add('bounce');
+  el.addEventListener('animationend',()=>el.classList.remove('bounce'),{once:true});
+}
+
+// ══ Streak ══
+let streaks=[0,0], soloStreak=0;
+function updateStreak(team,correct){
+  if(isSolo){
+    soloStreak=correct?soloStreak+1:0;
+    const el=document.getElementById('streak-blue');
+    if(el)el.textContent=soloStreak>=2?'🔥 '+soloStreak+' in Folge!':'';
+  } else {
+    streaks[team]=correct?streaks[team]+1:0;
+    const side=team===0?'blue':'red';
+    const el=document.getElementById('streak-'+side);
+    if(el)el.textContent=streaks[team]>=2?'🔥 '+streaks[team]+' in Folge!':'';
+  }
+}
 
 // ══ State ══
 let isSolo = false;
@@ -445,6 +537,7 @@ function startGame(){
   timerSecs=tc?parseInt(tc.dataset.timer):10;
   clearTimerInterval();
   soloCorrect=0;soloWrong=0;soloTotal=0;
+  streaks=[0,0];soloStreak=0;
 
   if(isSolo){
     teamWortarten[0]=[...teamWortarten[2]];
@@ -457,6 +550,8 @@ function startGame(){
     document.getElementById('pts-blue').className='score-pts green';
     document.getElementById('pt-blue').textContent=teamNames[2];
     document.getElementById('panel-blue').className='panel solo';
+    document.getElementById('avatar-blue').textContent=teamAvatars[2];
+    document.getElementById('streak-blue').textContent='';
     document.getElementById('win-info').textContent=maxRounds+' Aufgaben'+(timerOn?' · ⏱ '+timerSecs+'s pro Aufgabe':'');
     soloCorrect=0;soloWrong=0;soloTotal=0;
     locked=[false,false];gameOver=false;
@@ -477,9 +572,11 @@ function startGame(){
     document.getElementById('pt-blue').textContent=teamNames[0];
     document.getElementById('hdr-red').textContent=teamNames[1];
     document.getElementById('pt-red').textContent=teamNames[1];
-    document.getElementById('pts-blue').textContent='0';
-    document.getElementById('pts-red').textContent='0';
     document.getElementById('panel-blue').className='panel blue';
+    document.getElementById('avatar-blue').textContent=teamAvatars[0];
+    document.getElementById('avatar-red').textContent=teamAvatars[1];
+    document.getElementById('streak-blue').textContent='';
+    document.getElementById('streak-red').textContent='';
     document.getElementById('win-info').textContent=maxLead+' Felder Vorsprung oder max. '+maxRounds+' Runden = Sieg 🏆'+(hardMode?' · 💀 Schwerer Modus':'')+(timerOn?' · ⏱ '+timerSecs+'s':'');
     ropePos=0;scores=[0,0];answersGiven=[0,0];totalRounds=0;
     locked=[false,false];gameOver=false;
@@ -584,8 +681,9 @@ function handleAnswer(team,chosen,correct,btn){
   if(isSolo){
     clearTimerInterval();
     soloTotal++;
-    if(chosen===correct){soloCorrect++;btn.classList.add('correct-flash');fb.className='feedback-strip correct';}
+    if(chosen===correct){soloCorrect++;btn.classList.add('correct-flash');fb.className='feedback-strip correct';bounceAvatar('blue');}
     else{soloWrong++;btn.classList.add('wrong-flash');document.querySelectorAll('#btns-blue .wa-btn').forEach(b=>{if(b.dataset.waId===correct)b.classList.add('correct-flash');});fb.className='feedback-strip wrong';}
+    updateStreak(0,chosen===correct);
     updateRoundCounter();
     if(soloTotal>=maxRounds){setTimeout(()=>showSoloResult(),900);return;}
     setTimeout(()=>{newQuestion(0);if(timerOn)startSoloTimer();},900);
@@ -597,12 +695,14 @@ function handleAnswer(team,chosen,correct,btn){
       btn.classList.add('correct-flash');fb.className='feedback-strip correct';
       scores[team]++;ropePos+=(team===0?-1:1);
       document.getElementById('pts-'+side).textContent=scores[team];
+      bounceAvatar(side); updateStreak(team,true);
       drawRope();
       if(Math.abs(ropePos)>=maxLead){clearTimerInterval();gameOver=true;setTimeout(()=>showTeamResult(team,'rope'),700);return;}
     } else {
       btn.classList.add('wrong-flash');
       document.querySelectorAll('#btns-'+side+' .wa-btn').forEach(b=>{if(b.dataset.waId===correct)b.classList.add('correct-flash');});
       fb.className='feedback-strip wrong';
+      updateStreak(team,false);
       if(hardMode){
         scores[other]++;ropePos+=(other===0?-1:1);
         document.getElementById('pts-'+os).textContent=scores[other];
